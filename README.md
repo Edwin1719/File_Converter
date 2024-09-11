@@ -1,6 +1,6 @@
 # File_Converter
 
-![Logo](https://thumbs.dreamstime.com/b/chat-banner-20528092.jpg)
+![Logo](https://w7.pngwing.com/pngs/444/879/png-transparent-pdf-microsoft-word-computer-icons-security-pattern-miscellaneous-text-public-relations.png)
 
 ## This is an interactive web application developed with Streamlit that allows users to convert files into Word (.docx) and PDF (.pdf) formats. The app is designed to be easy to use, with an intuitive interface and minimalist design where they can upload the file and convert it to the opposite format with just a few clicks.
 
