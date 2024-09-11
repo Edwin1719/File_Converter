@@ -1,0 +1,5 @@
+pypandoc==1.6.4
+pdf2docx==0.5.8
+docx2pdf==0.1.8
+streamlit==1.32.0
+st_social_media_links==0.1.3
