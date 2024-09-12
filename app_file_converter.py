@@ -6,13 +6,13 @@ import logging
 import streamlit as st
 from st_social_media_links import SocialMediaIcons
 import tempfile
+import requests
 
 # Configurar el nivel de registro para suprimir mensajes de información y advertencia
 logging.getLogger().setLevel(logging.ERROR)
 
 # Configura tu API Key de CloudConvert
 API_KEY = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNGZmNzcyYWYwY2Q2YTFiYzdkNzM2MjdhOTVlOTU2YzhmOWM2YzM2ZGM4Nzc3NzdkZmE1M2ZlM2U3MTg4ZTQ0ZTNkMTMzZWU5ZDRjMzRmNjAiLCJpYXQiOjE3MjYxMDI4NDMuMDY5NTMsIm5iZiI6MTcyNjEwMjg0My4wNjk1MzIsImV4cCI6NDg4MTc3NjQ0My4wNjU4MjMsInN1YiI6IjY5NTYyMTYyIiwic2NvcGVzIjpbInRhc2sucmVhZCIsInRhc2sud3JpdGUiXX0.EtRNdks5U48z4XwvBhYN3SQxgmrxg4hxrufZL2PWArMI-f6fcllBj2wyuDya3Pe6SjOYMi775UAJVMm7PEEbEvJh2YLRMZuv_UlS5f27e1SLbfq4gKPDn3woI0K6YFzIJDFIMMM8xXwsasRme94lRwlELLoha0KgzejUYUdotXDqpJyE2VBw770dnzjsfiIfe62Wo1sgXRt4p87HSqf2ISJj3bQOVs7-UneLg4-8_CQMWGrwTGX3JVmtUnjRCxQszoB-cIKsEnTPEELxyFDdfnqae4jJjn-sD38LQO-GwW3Ue1rXzU0jtZH2vHtjJ4u8SjU9qRXW7TFZyjMFt4qju1YeykBdMDWc3hdHtXdUhEuF0DKPSEfYI8fk0Bs3tGRHRiGGtrgECN0ZYnlZkcP4u-R0w5HkGPbWWwVrmZRULYs63LBWzEuP-11oKFOzm45Z-AakVkZ7zP_CO0kPM1Z54IFeu_Io_its8lDEQNQALYdqeZ7yRtmkUo6xiQB6bd8cJ8WN4llhUtL0K3jP_eiZCIDBvHKPdNcqESD7NXOnbvBoNM9AUgAEVOOSQahyTjxGlktSDQUa4oqaFtxN6Itv4H0du307Su6Aa1uJpV9NIxazDGJBwB61tI_xmh6SDjKXSWFBW0EjdhjLLNeaRgWub1X5wlECXSHwvh-wwPhQAik"  # Reemplaza esto con tu clave
-
 cloudconvert.configure(api_key=API_KEY)
 
 # Configurar el estilo de la aplicación
@@ -81,10 +81,21 @@ if uploaded_file is not None:
                 }
             })
 
-            # Subir el archivo DOCX a CloudConvert
+            # Obtener el ID de la tarea de subida
             upload_task_id = job['tasks'][0]['id']
+            upload_url = job['tasks'][0]['result']['form']['url']
+
+            # Subir el archivo DOCX a CloudConvert
             with open(temp_file_path, 'rb') as docx_file:
-                cloudconvert.Task.upload(upload_task_id, file=temp_file_path)
+                response = requests.post(
+                    upload_url,
+                    files={'file': docx_file}
+                )
+
+            if response.status_code == 200:
+                st.success("Archivo subido correctamente a CloudConvert.")
+            else:
+                st.error(f"Error al subir el archivo: {response.content}")
 
             # Esperar a que el trabajo se complete
             job = cloudconvert.Job.wait(id=job['id'])
@@ -98,7 +109,7 @@ if uploaded_file is not None:
 
         except Exception as e:
             st.error(f"No se pudo completar la conversión a PDF: {e}")
-
+            
 # Pie de página con información del desarrollador y logos de redes sociales
 st.markdown("""
 ---
