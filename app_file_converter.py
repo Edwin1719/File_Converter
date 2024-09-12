@@ -84,7 +84,7 @@ if uploaded_file is not None:
             # Subir el archivo DOCX a CloudConvert
             upload_task_id = job['tasks'][0]['id']
             with open(temp_file_path, 'rb') as docx_file:
-                cloudconvert.Task.upload(upload_task_id, file=docx_file)
+                cloudconvert.Task.upload(upload_task_id, file=temp_file_path)
 
             # Esperar a que el trabajo se complete
             job = cloudconvert.Job.wait(id=job['id'])
